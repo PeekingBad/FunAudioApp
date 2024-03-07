@@ -93,7 +93,7 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
               ),
               const SizedBox(height: 32),
               const Text(
-                'The Flutter Song',
+                'Doornroosje',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               Slider(
