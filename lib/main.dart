@@ -75,25 +75,35 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
   @override
   void dispose() {
     audioPlayer.dispose();
-
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        body: Padding(
-          padding: EdgeInsets.all(20),
+        appBar: AppBar(
+          title: const Text('Doornroosje'),
+          centerTitle: true,
+        ),
+        body: SingleChildScrollView(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Image.asset('assets/doornroosje.jpg',
-                    width: double.infinity, height: 350, fit: BoxFit.cover),
+              SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 10.0), // Voegt horizontale padding toe
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.asset('assets/doornroosje.jpg',
+                      width: double
+                          .infinity, // Behoudt de breedte aan de randen na padding
+                      height: 200, // Hoogte zoals voorheen
+                      fit: BoxFit.cover),
+                ),
               ),
               const SizedBox(height: 32),
               const Text(
-                'Doornroosje',
+                'Luister naar Doornroosje',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               Slider(
@@ -101,10 +111,11 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
                 max: duration.inSeconds.toDouble(),
                 value: position.inSeconds.toDouble(),
                 onChanged: (value) async {
-                  final position = Duration(seconds: value.toInt());
-                  await audioPlayer.seek(position);
-
-                  await audioPlayer.resume();
+                  final newPosition = Duration(seconds: value.toInt());
+                  await audioPlayer.seek(newPosition);
+                  if (!isPlaying) {
+                    await audioPlayer.resume();
+                  }
                 },
               ),
               Padding(
@@ -118,23 +129,31 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
                 ),
               ),
               CircleAvatar(
-                radius: 35,
+                radius: 24,
                 child: IconButton(
-                  icon: Icon(
-                    isPlaying ? Icons.pause : Icons.play_arrow,
-                  ),
-                  iconSize: 50,
-                  onPressed: () async {
-                    if (isPlaying) {
-                      await audioPlayer.pause();
-                    } else {
-                      await audioPlayer.resume();
-                    }
-                  },
+                  icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
+                  iconSize: 25,
+                  onPressed: togglePlayPause,
                 ),
-              )
+              ),
+              const SizedBox(
+                  height: 20), // Ruimte toevoegen onder de afspeelknop
+              const Text(
+                'Geniet van het verhaal!', // Tekst toegevoegd onder de knop
+                style: TextStyle(
+                  fontSize: 18,
+                ),
+              ),
             ],
           ),
         ),
       );
+
+  void togglePlayPause() async {
+    if (isPlaying) {
+      await audioPlayer.pause();
+    } else {
+      await audioPlayer.resume();
+    }
+  }
 }
